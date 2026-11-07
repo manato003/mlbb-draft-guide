@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLBB ドラフト資料</title>
+<meta name="description" content="MLBB のドラフト（ピック・バン）の考え方をチームでそろえるための資料。パッチ 2.2.16a、MPL S18（PH・ID）基準。">
+<style>
+:root {
+  --bg: #f7f6f2; --surface: #ffffff; --text: #1d1f23; --muted: #5d636e; --line: #e2e0d8;
+  --accent: #b4462f; --accent-soft: #f6e6e1; --row: #faf9f6; --link: #1f5fa8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171b; --surface: #1d2026; --text: #e7e5df; --muted: #9aa0aa; --line: #30343c;
+    --accent: #e8836b; --accent-soft: #3a2621; --row: #22252c; --link: #8cb8f0;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  font-size: 16px; line-height: 1.8; -webkit-text-size-adjust: 100%;
+}
+a { color: var(--link); }
+.layout { max-width: 1180px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.layout > * { min-width: 0; }
+header.hero { padding: 40px 0 8px; }
+header.hero .kicker { color: var(--accent); font-weight: 700; letter-spacing: .08em; font-size: 13px; }
+header.hero h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.3; margin: 6px 0 12px; }
+header.hero .meta { color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.intro { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: 8px; padding: 16px 20px; margin: 20px 0 0; font-size: 15px; }
+.intro p { margin: 0 0 8px; } .intro p:last-child { margin: 0; }
+nav.toc { font-size: 14px; }
+nav.toc details { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+nav.toc summary { font-weight: 700; cursor: pointer; }
+nav.toc ol { list-style: none; margin: 8px 0 0; padding: 0; }
+nav.toc li { margin: 6px 0; }
+nav.toc a { color: var(--text); text-decoration: none; }
+nav.toc a:hover { color: var(--accent); }
+nav.toc ol.sub { margin: 2px 0 4px 30px; }
+nav.toc ol.sub a { color: var(--muted); font-size: 13px; }
+nav.toc .num, .chapter h2 .num { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+  font-weight: 700; font-size: 12px; margin-right: 8px; }
+main { min-width: 0; }
+.chapter { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 20px 20px; margin: 0 0 24px; }
+.chapter h2 { font-size: 22px; line-height: 1.4; margin: 20px 0 12px; display: flex; align-items: center; }
+.chapter h2 .num { min-width: 30px; height: 30px; font-size: 16px; border-radius: 8px; flex-shrink: 0; }
+.chapter h3 { font-size: 18px; margin: 28px 0 8px; padding-top: 16px; border-top: 1px dashed var(--line); }
+.chapter p { margin: 10px 0; }
+.chapter ul, .chapter ol { padding-left: 1.3em; margin: 8px 0; }
+.chapter li { margin: 4px 0; }
+.chapter strong { color: var(--text); background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+.table-wrap { overflow-x: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.6; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; font-weight: 700; }
+tbody tr:nth-child(even) td { background: var(--row); }
+tbody tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+.sources ol { font-size: 13px; padding-left: 1.6em; word-break: break-all; }
+footer { color: var(--muted); font-size: 13px; padding: 8px 0 40px; }
+@media (min-width: 980px) {
+  .layout { grid-template-columns: 260px minmax(0, 1fr); }
+  header.hero, .layout > .intro-row { grid-column: 1 / -1; }
+  nav.toc { position: sticky; top: 16px; align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; }
+  nav.toc details { border: 0; background: transparent; padding: 0; }
+  nav.toc summary { pointer-events: none; list-style: none; }
+  nav.toc summary::-webkit-details-marker { display: none; }
+  .chapter { padding: 8px 32px 28px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <header class="hero">
+    <div class="kicker">TEAM DRAFT GUIDE</div>
+    <h1>MLBB ドラフト資料</h1>
+    <div class="meta"><span>パッチ 2.2.16a</span><span>MPL S18（PH・ID）基準</span><span>2026年11月7日 更新</span></div>
+    <div class="intro">
+      <p>チームでドラフト（ピック・バン）の考え方をそろえるための資料です。今のメタ、強い構成の3つの型、枠ごとの役割と代わりのヒーロー、先行・後攻のバンピック、カウンター、オフメタ、プロ基準のティア表をまとめています。</p>
+      <p>数字はプロリーグ MPL のフィリピン（PH）とインドネシア（ID）の Season 18 から取っています。2つのリーグの違いは第1章の「PH と ID のメタの違い」を見てください。</p>
+    </div>
+  </header>
+  <nav class="toc" aria-label="目次">
+    <details id="toc">
+      <summary>目次</summary>
+      <ol>
+<li><a href="#ch1"><span class="num">1</span>今のメタと全体の動き</a><ol class="sub"><li><a href="#ch1-1">PH と ID のメタの違い</a></li></ol></li>
+<li><a href="#ch2"><span class="num">2</span>強い構成の3つの型と理想ピック</a><ol class="sub"><li><a href="#ch2-1">① バースト集団戦型（アテラス＋フレイヤ）</a></li><li><a href="#ch2-2">② アサシンジャングル型（メイン）</a></li><li><a href="#ch2-3">③ 回復持久型（マルセル・ラファエル ＋ マークスマン）</a></li><li><a href="#ch2-4">派生：ゴールドにファイターを置く</a></li></ol></li>
+<li><a href="#ch3"><span class="num">3</span>型ごとの枠の役割と代わりのヒーロー</a><ol class="sub"><li><a href="#ch3-1">① バースト集団戦型（フレイヤ / ノーラン / リリア / クラウド / アテラス）</a></li><li><a href="#ch3-2">② アサシンジャングル型（バラッツ / ヒララ / 燭心 / アイーダ / カーミラ）（メイン）</a></li><li><a href="#ch3-3">③ 回復持久型（アリス / アウルス / 燭心 / クラウド / マルセル）</a></li></ol></li>
+<li><a href="#ch4"><span class="num">4</span>バンピック（先行・後攻別）</a><ol class="sub"><li><a href="#ch4-1">ブルーサイド（先行）</a></li><li><a href="#ch4-2">レッドサイド（後攻）</a></li><li><a href="#ch4-3">バン1回目が終わった時点での型の決め方</a></li></ol></li>
+<li><a href="#ch5"><span class="num">5</span>カウンターと回復構成への対策</a><ol class="sub"><li><a href="#ch5-1">メタ上位への対策</a></li><li><a href="#ch5-2">回復構成（エスタス・ラファエル など）への対策</a></li></ol></li>
+<li><a href="#ch6"><span class="num">6</span>オフメタ・特殊構成</a></li>
+<li><a href="#ch7"><span class="num">7</span>ティア表：プロ（MPL）基準</a></li>
+        <li><a href="#sources"><span class="num">+</span>出典</a></li>
+      </ol>
+    </details>
+  </nav>
+  <main>
+<section class="chapter" id="ch1">
+<h2><span class="num">1</span>今のメタと全体の動き</h2>
+<p>今のプロメタは <strong>フレイヤ・アテラス・ヒララ の3体が軸</strong>で、そこにリワークされたマーシャが割り込んでいる。試合は短く、序盤のタートルとタワーを取った側が勝ちやすい。</p>
+<p><strong>前提となる状況</strong></p>
+<ul>
+<li>パッチ：オリジナルサーバーは 2.2.16a（10月14日配信）。アウルス・ヒララ・エウドラ・ラファエルが弱体化、カレアが強化。その前の 2.2.16（9月16日）でマーシャがリワークされた。</li>
+<li>MPL PH Season 18：Aurora Gaming が決勝で Team Falcons を 4-2 で破り優勝。両チームが M8 世界大会（イスタンブール、2026年12月17日〜2027年1月23日）へ。</li>
+<li>MPL ID Season 18：プレーオフは11月4〜8日にスラバヤで開催中。</li>
+</ul>
+<p><strong>プロで最も取られる・バンされるヒーロー</strong>（MPL S18、7 Nov 2026 時点）</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ヒーロー</th>
+<th>主なレーン</th>
+<th>PH ピック / バン / 勝率</th>
+<th>ID ピック / バン / 勝率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フレイヤ</td>
+<td>EXP・ゴールド</td>
+<td>24 / 148 / 75%</td>
+<td>54 / 143 / 52%</td>
+</tr>
+<tr>
+<td>アテラス</td>
+<td>ローム・EXP</td>
+<td>35 / 133 / 63%</td>
+<td>56 / 129 / 52%</td>
+</tr>
+<tr>
+<td>ヒララ</td>
+<td>ジャングル</td>
+<td>127 / 39 / 45%</td>
+<td>94 / 85 / 52%</td>
+</tr>
+<tr>
+<td>パキート</td>
+<td>ジャングル・EXP・ゴールド</td>
+<td>71 / 81 / 59%</td>
+<td>98 / 73 / 44%</td>
+</tr>
+<tr>
+<td>マルセル</td>
+<td>ローム</td>
+<td>47 / 75 / 55%</td>
+<td>34 / 101 / 65%</td>
+</tr>
+<tr>
+<td>ファニー</td>
+<td>ジャングル</td>
+<td>15 / 96 / 47%</td>
+<td>22 / 119 / 55%</td>
+</tr>
+<tr>
+<td>マーシャ</td>
+<td>EXP・ローム</td>
+<td>13 / 74 / 69%</td>
+<td>24 / 77 / 46%</td>
+</tr>
+</tbody>
+</table></div>
+<p>出典：<a href="https://mlbbhub.com/mpl/ph/stats" target="_blank" rel="noopener">MLBBHub PH</a>、<a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub ID</a></p>
+<p><strong>試合展開の特徴</strong></p>
+<ul>
+<li>ブルーサイドが有利。勝率は ID で 58%、PH で 53%。</li>
+<li>最初のバンは、レッド側がフレイヤ（PH 52%）とマーシャ（27%）、ブルー側がファニー（20%）とアテラス（16%）。</li>
+<li>11〜17分で決着する試合が多い。最初のタートル（2:00）に3〜4人で行くのが定番。</li>
+<li>9月28日からは、試合ごとにマップ効果（回復タートル・ゴールデンタワー・視界のウィスプ・空飛ぶ雲）が1つランダムで付く。</li>
+<li>ランクとプロは違う。ランク上位はマーシャ・マルセル・アルゴス・ラファエルで、フレイヤはランクでは C ティア。フルパならプロの型をそのまま使える。</li>
+</ul>
+<h3 id="ch1-1">PH と ID のメタの違い</h3>
+<p>軸の4体（フレイヤ・アテラス・ヒララ・パキート）は、PH でも ID でもピックとバンの合計で上位4体に入っている。メタの骨格は同じで、違いは「どれを止めて、どれを通すか」と、軸の周りに置くヒーローに出る。PH はシーズンが終わっていて172試合、ID はプレーオフの途中で、190試合（6 Nov）からさらに増えている。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ヒーロー</th>
+<th>PH ピック / バン / 勝率</th>
+<th>ID ピック / バン / 勝率</th>
+<th>違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フレイヤ</td>
+<td>24 / 148 / 75%</td>
+<td>54 / 143 / 52%</td>
+<td>PH はほぼ毎試合バンし、通すと4試合に3試合勝つ。ID は通す試合が PH の倍あり、勝率は五分</td>
+</tr>
+<tr>
+<td>ヒララ</td>
+<td>127 / 39 / 45%</td>
+<td>94 / 85 / 52%</td>
+<td>PH はバンせずに取り合う定番のジャングラーで、勝率は低め。ID はバンもピックと同じくらい多い</td>
+</tr>
+<tr>
+<td>パキート</td>
+<td>71 / 81 / 59%</td>
+<td>98 / 73 / 44%</td>
+<td>PH では勝ちにつながっているが、ID では取られる数のわりに勝てていない</td>
+</tr>
+<tr>
+<td>マルセル</td>
+<td>47 / 75 / 55%</td>
+<td>34 / 101 / 65%</td>
+<td>ID の優先バン。取れた試合の勝率は65%</td>
+</tr>
+<tr>
+<td>ファニー</td>
+<td>15 / 96 / 47%</td>
+<td>22 / 119 / 55%</td>
+<td>どちらもバンが中心で、ID の方が多くバンされる</td>
+</tr>
+<tr>
+<td>バラッツ</td>
+<td>54 / 62 / 57%</td>
+<td>41 / 43 / 46%</td>
+<td>PH の EXP の定番（Aurora の構成）。ID では勝率が下がる</td>
+</tr>
+<tr>
+<td>マーシャ</td>
+<td>13 / 74 / 69%</td>
+<td>24 / 77 / 46%</td>
+<td>どちらもバンが中心。PH はピックが13回と少なく、勝率は参考程度</td>
+</tr>
+<tr>
+<td>クラウド</td>
+<td>43 / 8 / 60%</td>
+<td>65 / 11 / 49%</td>
+<td>どちらもほぼバンされない。ID の方がよく取られる</td>
+</tr>
+<tr>
+<td>燭心</td>
+<td>44 / 34 / 57%</td>
+<td>59 / 53 / 51%</td>
+<td>ID の方がピックもバンも多い</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>PH だけ上位に入る</strong>：ガトートカチャ（54ピック・勝率41%）とミノタウロス（56ピック・46%）。ロームに前衛を置く試合が多い。どちらも ID の上位25体には入っていない。</li>
+<li><strong>ID だけ上位に入る</strong>：アリス（44ピック・31バン・勝率55%）。グルーは両方で勝率が高い（ID 44ピック・61%、PH 22ピック・59%）が、取られる数は ID が倍。</li>
+</ul>
+<p><strong>読み取れること</strong></p>
+<ul>
+<li><strong>バン</strong>：PH はフレイヤに集中し（レッド側の最初のバンの52%）、残りの枠でアテラスやファニーを止める。ID はフレイヤ・アテラスに加えて、マルセル・ファニー・ヒララまでバンが広く散る。</li>
+<li><strong>ピック</strong>：PH はヒララを軸に、バラッツ・ガトートカチャ・ミノタウロスのような前衛を厚くする組み立てが多い。ID はクラウド・アリス・燭心など、PH の上位に無いヒーローも軸の周りで使われる。</li>
+<li><strong>勝率の差の読み方</strong>：ピックが数十回の勝率は、リーグの間で10ポイントほど差があっても偶然で説明できる範囲にある。差を読むのは、ピック数とバン数の違い（どれを止めるか、どれを通すか）を先にする。</li>
+</ul>
+<p><strong>この資料が依拠しているデータ</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>章</th>
+<th>主なデータ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第1章（メタ）・第7章（ティア表）</td>
+<td>PH と ID の両方。ティア表は2リーグ合計362試合</td>
+</tr>
+<tr>
+<td>第2・3章（型と実例）</td>
+<td>実例はすべて PH（MLBBDex PH S18）。型の軸のヒーローは ID でも上位</td>
+</tr>
+<tr>
+<td>第4章（バンピック）</td>
+<td>両方の drafts。最初のバンの割合は PH の数字</td>
+</tr>
+<tr>
+<td>第6章（オフメタ）</td>
+<td>ID の選手別データ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>チームでの使い分け</strong></p>
+<ul>
+<li><strong>新しいパッチの流れは ID を先に見る</strong>。ID は11月のプレーオフまで試合が続いていて、2.2.16a の影響が一番新しい数字に出る。</li>
+<li><strong>型の組み立てとドラフトの手本は PH を見る</strong>。世界大会で勝っているのは PH で、M7（2026年1月）では Aurora Gaming PH が Alter Ego（ID）を 4-0 で破り、フィリピンの M シリーズ6連覇になった。</li>
+</ul>
+<p>出典：<a href="https://mlbbhub.com/mpl/ph/stats" target="_blank" rel="noopener">MLBBHub PH</a>、<a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub ID</a>、<a href="https://mlbbhub.com/mpl/ph/drafts" target="_blank" rel="noopener">MLBBHub PH drafts</a>（いずれも 7 Nov 2026 時点）、<a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/01/25/m7-filipino-side-aurora-gaming-ph-beat-indonesian-team-alter-ego-to-claim-world-title" target="_blank" rel="noopener">The Star – M7</a></p>
+</section>
+<section class="chapter" id="ch2">
+<h2><span class="num">2</span>強い構成の3つの型と理想ピック</h2>
+<p>用意する型は3つと派生1つ。<strong>メインは②アサシンジャングル型</strong>で、フレイヤかアテラスの少なくとも一方が空いたら①（もう一方は第3章の代わりの候補で埋める）、相手が回復構成なら③か単独狩りに切り替える。フレイヤとアテラスはほぼ毎試合バンされるので、①をメインにすると型が崩れやすい。</p>
+<h3 id="ch2-1">① バースト集団戦型（アテラス＋フレイヤ）</h3>
+<ul>
+<li><strong>勝ち筋</strong>：アテラスが敵をまとめて引き寄せ、フレイヤが10秒間の強化状態で飛び込む。範囲魔法のミッドが追撃して、集団戦を一瞬で終わらせる。</li>
+<li><strong>実例</strong>：ONIC PH が フレイヤ / ノーラン / リリア / クラウド / アテラス で、14分で TNC に勝利（左から EXP / ジャングル / ミッド / ゴールド / ローム）。</li>
+<li><strong>弱点</strong>：洗礼、ディガーのウルト、散開した陣形、フォビウス・マイシータール。</li>
+</ul>
+<h3 id="ch2-2">② アサシンジャングル型（メイン）</h3>
+<ul>
+<li><strong>勝ち筋</strong>：ヒララやファニーで序盤の小競り合いとタートルを取る。硬い前衛2枚が集団戦の入口を作り、15分前後で終わらせる。</li>
+<li><strong>実例</strong>：Aurora が バラッツ / ヒララ / 燭心 / フレイヤ / ガトートカチャ でプレーオフ初戦を勝利。ONIC も カーディアン / ヒララ / リリア / シーシー / マーシャ で勝利。</li>
+<li><strong>弱点</strong>：セイバー・クッフラー・マイシータールのような確実に止めるスキル、試合を長引かせること。</li>
+</ul>
+<h3 id="ch2-3">③ 回復持久型（マルセル・ラファエル ＋ マークスマン）</h3>
+<ul>
+<li><strong>勝ち筋</strong>：粘り強い前衛と回復で集団戦を長引かせ、その間にマークスマンが安全に火力を出し続ける。</li>
+<li><strong>実例</strong>：ONIC が アリス / アウルス / 燭心 / クラウド / マルセル、Team Liquid PH が ルビー / パキート / エウドラ / クリント / マルセル で勝利。</li>
+<li><strong>弱点</strong>：アンチヒール装備、一瞬で倒しきるバースト、ヒーラーを先に狙われること。ラファエルとアウルスは 2.2.16a で少し弱体化済み。</li>
+<li>ソロランクではこの型が一番安定する。</li>
+</ul>
+<h3 id="ch2-4">派生：ゴールドにファイターを置く</h3>
+<p>マークスマンの層が薄いので、ゴールドにフレイヤ・パキート・シーシーを置いて前衛寄りに組む。②と組み合わせることが多い。ロームが早めにゴールドを離れられるので、序盤から試合を動かしやすい。</p>
+<p>実例の出典：<a href="https://mlbbdex.com/en/esports/mpl-ph-season-18" target="_blank" rel="noopener">MLBBDex MPL PH S18</a></p>
+<p><strong>型ごとの理想ピック（ここからバンと相手のピックで差し替える）</strong></p>
+<p>各型の理想の5体は、MPL S18 で実際に勝った構成をもとにしている。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>型</th>
+<th>EXP</th>
+<th>ジャングル</th>
+<th>ミッド</th>
+<th>ゴールド</th>
+<th>ローム</th>
+<th>元にした実例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① バースト集団戦型</td>
+<td>フレイヤ</td>
+<td>ノーラン</td>
+<td>リリア</td>
+<td>クラウド</td>
+<td>アテラス</td>
+<td>ONIC PH が14分で勝利</td>
+</tr>
+<tr>
+<td>② アサシンジャングル型</td>
+<td>バラッツ</td>
+<td>ヒララ</td>
+<td>燭心</td>
+<td>アイーダ</td>
+<td>カーミラ</td>
+<td>Aurora・ONIC のヒララ構成</td>
+</tr>
+<tr>
+<td>③ 回復持久型</td>
+<td>アリス</td>
+<td>アウルス</td>
+<td>燭心</td>
+<td>クラウド</td>
+<td>マルセル</td>
+<td>ONIC PH が TNC に勝利</td>
+</tr>
+<tr>
+<td>派生：ゴールドにファイター</td>
+<td>バラッツ</td>
+<td>ヒララ</td>
+<td>燭心</td>
+<td>フレイヤ</td>
+<td>ガトートカチャ</td>
+<td>Aurora がプレーオフ初戦で勝利</td>
+</tr>
+</tbody>
+</table></div>
+<p>バンや相手のピックで理想の5体がそろわないときの差し替えは、第3章で枠ごとの役割から選ぶ。</p>
+</section>
+<section class="chapter" id="ch3">
+<h2><span class="num">3</span>型ごとの枠の役割と代わりのヒーロー</h2>
+<p>第2章の理想の5体を基準に、各ヒーローがその構成で果たしている役割を言葉にした。理想のヒーローが取れなかったら、同じ枠の「代わりの候補」から、役割を果たせるヒーローを選ぶ。候補は役割に近い順に並べ、理由はヒーロー別の強み・弱みから取った。「この枠をこのヒーローにしたら、別の枠はこれ」という組み合わせの指定はせず、5つの役割が埋まっているかで判断する。</p>
+<h3 id="ch3-1">① バースト集団戦型（フレイヤ / ノーラン / リリア / クラウド / アテラス）</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>枠</th>
+<th>理想</th>
+<th>役割</th>
+<th>代わりの候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ローム</td>
+<td>アテラス</td>
+<td>集団に CC をかけながら仕掛ける。この型の起点</td>
+<td>範囲 CC で一気に仕掛けられるロームなら代わりになる。カレア、カチャ（ウルトで範囲の敵を全員引き寄せる）、クッフラー（集団に飛び込んで CC をかける）、ガトートカチャ（突進と CC で前に出る。可能性のある候補）、カーミラ（範囲の拘束。続けられなくはない）。ミノタウロスは敵を引っ張ってこられないので向かない</td>
+</tr>
+<tr>
+<td>EXP</td>
+<td>フレイヤ</td>
+<td>アテラスのウルトに合わせて一番の火力を出し、CC で追撃する。単体の DPS も高く、ウルトの飛び込み中は CC を受けない</td>
+<td>集団戦に強い EXP のファイターなら、フレイヤより一段落ちるが型は成り立つ。ラインロック、ゾン。バラッツは前衛で単体 CC のため役割が違う</td>
+</tr>
+<tr>
+<td>ミッド</td>
+<td>リリア</td>
+<td>序盤から、2人の仕掛けに合わせて奥の敵までダメージを届け、追撃もする</td>
+<td>燭心（集団戦から逃げる敵をウルトの瞬間移動で追い、CC で戦場に戻す）、オーロラ、カグラ（範囲バーストと機動力。序盤に詰められると弱い）</td>
+</tr>
+<tr>
+<td>ゴールド</td>
+<td>クラウド</td>
+<td>ミッドに近い立ち位置。後半になるほど集団戦のダメージを上乗せする</td>
+<td>アイーダ（複数の敵を貫く攻撃）、ハナビ（敵が固まる集団戦に強い）、マイヤ</td>
+</tr>
+<tr>
+<td>ジャングル</td>
+<td>ノーラン</td>
+<td>味方が削った敵を機動力で追ってキルを回収する。全体にダメージも足す</td>
+<td>パキート（張り付いて殴り合う）、ファニー（機動力と高いバースト。操作が難しい）</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>フレイヤかアテラスのどちらかが消えても、上の代わりの候補で①を続けられる。どちらの代わりも、理想のヒーローよりは一段落ちる。</li>
+<li>相手にディガー・フォビウス・マイシータールが見えたら危険（アテラスのウルトとフレイヤの飛び込みが止められる）。</li>
+<li>アテラスは4レベル（ウルト）を最優先する。ノーランは序盤はファームで4レベルに乗せ、集団戦ではフレイヤと一緒に飛び込んで残った敵を仕留める。</li>
+</ul>
+<h3 id="ch3-2">② アサシンジャングル型（バラッツ / ヒララ / 燭心 / アイーダ / カーミラ）（メイン）</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>枠</th>
+<th>理想</th>
+<th>役割</th>
+<th>代わりの候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ジャングル</td>
+<td>ヒララ</td>
+<td>主役。序盤の小競り合いとタートルで主導権を取り、後衛を狩る</td>
+<td>パキート（序盤の殴り合いと張り付き）、ファニー（機動力とバースト）、ノーラン（入って抜けるバースト）</td>
+</tr>
+<tr>
+<td>ローム</td>
+<td>カーミラ</td>
+<td>CC で集団戦の入口を作る。ジャングラーと一緒に動いて視界を取る</td>
+<td>ガトートカチャ（突進と CC で味方の前に出る）、マーシャ、カレア</td>
+</tr>
+<tr>
+<td>EXP</td>
+<td>バラッツ</td>
+<td>硬い前衛。序盤はレーンを守り、タートルと集団戦で入口を作る</td>
+<td>ウラノス（持久戦と前線の維持）、カーディアン（範囲のタンク。ONIC がこの型の EXP で使用）、マーシャ（3本の HP と吸血で粘る）</td>
+</tr>
+<tr>
+<td>ミッド</td>
+<td>燭心</td>
+<td>捕まえる側。倒しきるのではなく、CC で敵を捕まえて味方にキルを取らせる。逃げる敵はウルトの瞬間移動で追う。ウルトのシールドで1人でも耐えられる</td>
+<td>エウドラ（倒しきる、または味方が回収できるまで削る）、セリナ（スキル2のスタンや視界取りで支える面もあるが、ミッドで取るなら求められるのはダメージ）。どちらも燭心とは違い、ダメージを出す側</td>
+</tr>
+<tr>
+<td>ゴールド</td>
+<td>アイーダ</td>
+<td>マークスマンなら序盤は無理せずファームし、集団戦で火力を出す</td>
+<td>クラウド、クリント。マークスマンが取れなければファイター（フレイヤ・パキート・シーシー）を置き、前に出て前衛を厚くする（第2章の派生）</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>相手にセイバー・クッフラー・マイシータールが見えたら、アサシンが捕まらないよう EXP とロームを硬いヒーローにする。</li>
+<li>長引くと不利なので、ロームとミッドは序盤から動けるヒーローを選ぶ。</li>
+</ul>
+<h3 id="ch3-3">③ 回復持久型（アリス / アウルス / 燭心 / クラウド / マルセル）</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>枠</th>
+<th>理想</th>
+<th>役割</th>
+<th>代わりの候補</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ゴールド</td>
+<td>クラウド</td>
+<td>勝ち筋。回復と前衛に守られながら火力を出し続ける。序盤はロームが長めに守る</td>
+<td>クリント（ミニオン越しにポークできる。10〜16分がピーク）、アイーダ</td>
+</tr>
+<tr>
+<td>ローム</td>
+<td>マルセル</td>
+<td>拘束か回復でマークスマンを守り、集団戦を長引かせる</td>
+<td>ラファエル（回復と移動速度、視界）、エスタス（回復と周囲のスロー）、ミノタウロス（範囲 CC と回復。飛び込んでくる相手を止める）</td>
+</tr>
+<tr>
+<td>EXP</td>
+<td>アリス</td>
+<td>粘る前衛。後衛を守りながら長く戦う</td>
+<td>ルビー（引き寄せて回復しながら1人を捕まえる）、ウラノス（戦闘が続くほど回復する）</td>
+</tr>
+<tr>
+<td>ミッド</td>
+<td>燭心</td>
+<td>入ってくる敵を CC で止めて接近を拒否し、相手の集団戦をディスエンゲージする。あわせて範囲ダメージで長期戦を支える。キルを取らせるより守る方に CC を使う</td>
+<td>リリア（遠距離からの範囲ダメージ）、ベルス（炎上の3スタックでスタン）</td>
+</tr>
+<tr>
+<td>ジャングル</td>
+<td>アウルス</td>
+<td>ファーム優先。タートル・ロードなど目的物の確保を担う</td>
+<td>パキート（Team Liquid PH がこの型で使用）</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>相手にバーストアサシンが多いときは、アンチヒール装備を積まれる前提で構える。ラファエルとアウルスは 2.2.16a で少し弱体化済み。</li>
+<li>ミノタウロスはプロでは登場率41%・勝率44%と勝ち切れていないが、ランクは S。</li>
+</ul>
+<p><strong>複数レーンで使えるヒーロー</strong>（先に取って配置を隠せる）</p>
+<ul>
+<li>パキート：EXP・ジャングル・ゴールド</li>
+<li>フレイヤ：EXP・ゴールド</li>
+<li>マーシャ：EXP・ローム</li>
+<li>アウルス：ジャングル主体、EXP・ゴールドも可</li>
+<li>エスメラルダ・シーシー：EXP・ゴールド</li>
+</ul>
+<p><strong>ミッドのヒーロープール（このチーム用）</strong></p>
+<ul>
+<li>メイン：リリア、燭心。①と③の型を両方カバーできる。燭心はランクでは B ティアだが、MPL PH では44ピック・勝率57%。連携前提のヒーローなのでフルパ向き。</li>
+<li>バースト枠：エウドラかカグラ。回復構成や②の型で使う。</li>
+<li>余裕があれば：オーロラ（①の型専用）、バレンティナ（敵のウルトをコピーできる。相手にアテラスがいればこちらもアテラスのウルトを撃てる）。</li>
+<li>優先度が低い：ノヴァリア。スキルが当たらなかったときの保証が薄く、短い試合に合わせにくい。</li>
+</ul>
+<p><strong>ゴールドの候補（バンされることも含めた優先順）</strong></p>
+<p>ゴールドの第一候補はアイーダ。ただしランクでもプロでもバンされやすいので、<strong>アイーダが消えたときのクラウドかクリントを必ず用意しておく</strong>。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ヒーロー</th>
+<th>ランク戦</th>
+<th>プロ（MPL S18）</th>
+<th>扱い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>アイーダ</td>
+<td>S、勝率53.3%、バン率46.8%</td>
+<td>ID 46ピック・31バン・勝率61%、PH 37ピック・25バン・勝率51%</td>
+<td>第一候補。空いていれば早めに確保</td>
+</tr>
+<tr>
+<td>クラウド</td>
+<td>C、勝率48.9%</td>
+<td>PH 43ピック・8バン・勝率60%、ID 63ピック・10バン・勝率51%</td>
+<td>ほぼバンされない安定枠。ブルーの最後のピック向き</td>
+</tr>
+<tr>
+<td>クリント</td>
+<td>B、勝率50.5%</td>
+<td>PH 勝率約70%（30ピック前後）</td>
+<td>バンが少なく勝率が高い穴場</td>
+</tr>
+<tr>
+<td>ブルーノ・ハナビ・エレシル</td>
+<td>A、勝率52.6〜53.7%</td>
+<td>プロでは少数</td>
+<td>ランクでは強い代替候補</td>
+</tr>
+<tr>
+<td>メリッサ</td>
+<td>C、勝率48.7%</td>
+<td>PH 52バン。シーズン前半は最優先バン級だったが、2.2.16で弱体化</td>
+<td>優先度は下げる</td>
+</tr>
+<tr>
+<td>ブロディ</td>
+<td>B、勝率50.0%</td>
+<td>PH 28ピックで勝率25%</td>
+<td>プロ構成では避ける</td>
+</tr>
+</tbody>
+</table></div>
+<p>ゴールドはマークスマンの層が薄いので、アイーダもクラウド・クリントも取れないときは、ファイター（フレイヤ・パキート・シーシー）を置く派生の形に切り替える。</p>
+<p>出典：<a href="https://mlbbhub.com/mpl/ph/stats" target="_blank" rel="noopener">MLBBHub PH</a>、<a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub ID</a>、<a href="https://mlbbdex.com/en/esports/mpl-ph-season-18" target="_blank" rel="noopener">MLBBDex PH</a>、<a href="https://mlbbhub.com/tier-list" target="_blank" rel="noopener">MLBBHub ティア表</a></p>
+</section>
+<section class="chapter" id="ch4">
+<h2><span class="num">4</span>バンピック（先行・後攻別）</h2>
+<p>ブルー（先行）は強いヒーローを先に確保し、レッド（後攻）は最後のピックでカウンターを出す。以下は MPL 方式のドラフトが前提。ランクで形式が違う場合も考え方はそのまま使える。</p>
+<p><strong>ドラフトの順番</strong></p>
+<ol>
+<li>バン（1回目）：両チーム3つずつ（ブルーとレッドが交互）</li>
+<li>ピック：ブルー1 → レッド1・2 → ブルー2・3 → レッド3</li>
+<li>バン（2回目）：両チーム2つずつ（レッドから）</li>
+<li>ピック：レッド4 → ブルー4・5 → レッド5（最後のピックはレッド）</li>
+</ol>
+<h3 id="ch4-1">ブルーサイド（先行）</h3>
+<ul>
+<li><strong>バン1回目</strong>：ファニーとマーシャを優先。残り1つは自分たちの型を壊すヒーロー（①ならディガー、②ならセイバーやクッフラー）。フレイヤとアテラスはあえて残し、相手のバンを使わせるのも手。</li>
+<li><strong>ピック1</strong>：最強か、複数レーンで使えるヒーロー。優先順は フレイヤ → アテラス → パキート → ヒララ。フレイヤが残っていたら即確保。</li>
+<li><strong>ピック2・3</strong>：型の軸を完成させる。アテラスを取れたら範囲ダメージのミッドとフレイヤ（なければ硬い EXP）。パキートを取れたらヒララかノーランと、カーミラかガトートカチャ。</li>
+<li><strong>バン2回目</strong>：相手が見せた3体から、まだいない役割の候補を潰す（例：ゴールドがいなければクラウドかアイーダ）。</li>
+<li><strong>ピック4・5</strong>：最後はレッドにカウンターされるので、崩れにくい安定したヒーローで締める（ゴールドならクラウド、ミッドなら燭心）。</li>
+</ul>
+<h3 id="ch4-2">レッドサイド（後攻）</h3>
+<ul>
+<li><strong>バン1回目</strong>：定番はフレイヤ・マーシャ、そしてアテラスかヒララ。相手の得意ヒーローが分かればそれを優先。</li>
+<li><strong>ピック1・2</strong>：2体続けて取れるのが強み。相手の最初がアテラスならパキート＋ヒララ。相手の最初がパキートならアテラス＋マルセル、フレイヤが残っていればアテラス＋フレイヤ。</li>
+<li><strong>ピック3</strong>：複数レーンで使えるヒーローで役割を隠す。</li>
+<li><strong>バン2回目（レッドから先）</strong>：相手の型に必要な残りのパーツを潰す（例：相手にロームがいなければカーミラとマルセル）。</li>
+<li><strong>ピック4</strong>：型を完成させるヒーロー。</li>
+<li><strong>ピック5（最後）</strong>：ミッドが取るのが理想。相手が回復構成ならエウドラかカグラ、密集する構成ならオーロラかリリア、突撃してくる構成ならベルスか燭心。</li>
+</ul>
+<h3 id="ch4-3">バン1回目が終わった時点での型の決め方</h3>
+<ol>
+<li>フレイヤかアテラスの少なくとも一方が残っている → ①（もう一方は第3章の代わりの候補で埋める）</li>
+<li>ヒララかパキートと、硬い前衛が取れる → ②</li>
+<li>どちらも取れず、マルセルかラファエルが空いている → ③</li>
+<li>相手がエスタスやラファエルを取った → ミッドをバーストに切り替え、単独狩りの方針に寄せる（第5章参照）</li>
+</ol>
+<p>データ出典：<a href="https://mlbbhub.com/mpl/id/drafts" target="_blank" rel="noopener">MLBBHub ID drafts</a>、<a href="https://mlbbhub.com/mpl/ph/drafts" target="_blank" rel="noopener">MLBBHub PH drafts</a></p>
+</section>
+<section class="chapter" id="ch5">
+<h2><span class="num">5</span>カウンターと回復構成への対策</h2>
+<p>カウンターピックは「相手の勝ち筋を1つ特定して潰す」こと。統計上の相性差は勝率で+2〜5ポイント程度なので、カウンターだけ取って構成が弱くならないようにする。</p>
+<h3 id="ch5-1">メタ上位への対策</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>相手</th>
+<th>効くヒーロー</th>
+<th>装備・立ち回り</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>フレイヤ</td>
+<td>フォビウス（+4.9）、マイシータール（+4.7）、エスメラルダ、フランコ</td>
+<td>ドミナント か トライデント、ブレードアーマー。飛び込み中は CC 無効なので、着地してから CC を当てる。10秒の強化状態は逃げて時間を稼ぐ</td>
+</tr>
+<tr>
+<td>アテラス</td>
+<td>マルセル（+5.9）、琥珀（+3.8）、アリス（+3.1）、ディガー、ベルス</td>
+<td>洗礼。散開して戦い、目的物の前で固まらない</td>
+</tr>
+<tr>
+<td>ヒララ</td>
+<td>セイバー（+2.7）、フォビウス（+2.3）、ブルーノ（+2.1）、クッフラー、マイシータール</td>
+<td>序盤の小競り合いを避けて試合を長引かせる。捕まえればすぐ落ちる</td>
+</tr>
+<tr>
+<td>マーシャ</td>
+<td>悟空、アルゴス、エスタス、アウルス、ウラノス</td>
+<td>アンチヒール装備と、長期戦で殴り勝てるファイター</td>
+</tr>
+</tbody>
+</table></div>
+<p>（カッコ内はランクでの相性差。勝率のポイント）注意：マーシャ・マチルダ・ロインはフレイヤに不利なので、フレイヤ対策には出さない。</p>
+<h3 id="ch5-2">回復構成（エスタス・ラファエル など）への対策</h3>
+<p>共通の結論は、<strong>長く続く互角の5対5をしない</strong>こと。そのうえで構成とタイミングで使い分ける。</p>
+<ul>
+<li><strong>単独の敵を拾う</strong>：先に1人落として5対4にすれば、回復量の差は関係なくなる。条件を選ばない一番安全な勝ち方。</li>
+<li><strong>仕掛けてヒーラーに集中</strong>：仕掛けが敵の後衛まで届くときだけ成立（アテラス・カチャの引き寄せ、フランコのフック、裏に回るアサシン）。2〜3秒で落としきる。前衛にしか当たらないと削り負ける。</li>
+<li><strong>ウルトを使わせてから戦う</strong>：エスタスのウルトはクールダウンが長い。使った直後が全員で仕掛けるチャンス。</li>
+<li><strong>正面の5対5を避ける</strong>：サイドのタワーや、相手がいない間のタートル・ロードを取る。</li>
+<li><strong>アンチヒール装備を役割ごとに分担</strong>：トライデント（物理）、ヒートロッド（魔法）、ドミナント（タンク。攻撃を受けたときだけ、1秒しか効果がない）。同じ効果を重ねても強くならないので、複数の敵に当て続けられるよう分担する。回復の強い敵が2体以上なら全員が1つずつ。</li>
+<li><strong>ミッドの選び方</strong>：単独狩りならエウドラやセリナ。仕掛けて集中するならカグラやオーロラ。燭心は回復役が1枚なら「捕まえて投げる役」で使えるが、回復が2枚ならバースト系に切り替える。</li>
+<li>自分たちに上の手段がなければ、エスタスは素直にバンする。</li>
+</ul>
+<p>出典：<a href="https://timesaver.gg/blog/how-to-counter-freya-mobile-legends" target="_blank" rel="noopener">Timesaver フレイヤ対策</a>、<a href="https://mlbbhub.com/counter/hirara" target="_blank" rel="noopener">MLBBHub ヒララ対策</a>、<a href="https://timesaver.gg/blog/how-to-counter-masha-mobile-legends" target="_blank" rel="noopener">Timesaver マーシャ対策</a>、<a href="https://mlbb.io/tr/hero/atlas/counter" target="_blank" rel="noopener">mlbb.io アテラス対策</a>、<a href="https://mobile-legends.fandom.com/wiki/Dominance_Ice" target="_blank" rel="noopener">MLBB Wiki Dominance Ice</a>、<a href="https://synnmlbb.com/blog/4-crucial-item-tricks-in-mobile-legends-that-90-of-players-ignore" target="_blank" rel="noopener">Synn Store 装備のコツ</a></p>
+</section>
+<section class="chapter" id="ch6">
+<h2><span class="num">6</span>オフメタ・特殊構成</h2>
+<p>王道から外れるが、MPL で実際に使われた組み合わせ。試合数は MPL ID S18 の選手別データより（例：「18試合12勝」）。どれも試合数が少ないので、勝率は参考程度に見る。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>構成</th>
+<th>勝ち筋</th>
+<th>MPL での実例</th>
+<th>弱点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>回復ミッド（ミッドにラファエル）</strong></td>
+<td>中央から回復・移動速度・視界を配る。ロームにアテラスやガトートカチャなどの仕掛け役を置き、実質サポート2枚で集団戦を持たせる。火力はジャングルとゴールドが担当</td>
+<td>8選手で計18試合12勝。RRQ・Alter Ego・Team Liquid ID などが使用。今回のオフメタの中では一番実績がある</td>
+<td>ミッドの火力とミニオン処理が弱く、ミッドのタワーを押されやすい。2.2.16a でクールダウン延長。飛び込みに弱い</td>
+</tr>
+<tr>
+<td><strong>ミッドにアンジェラ</strong></td>
+<td>ウルトで飛び込み役（フレイヤ・パキート・ヒララ）に乗り移り、シールドと回復で無理な突撃を通す。減速と拘束で追撃もできる</td>
+<td>3選手が1試合ずつ使用し、3戦全敗（Bigetron・RRQ・Dewa United）。ランクでは勝率50.1%の B</td>
+<td>火力とミニオン処理が低い。乗り移った味方が先に狙われると何もできない。アンチヒールに弱い</td>
+</tr>
+<tr>
+<td><strong>ミッドにマチルダ</strong></td>
+<td>移動の速さと奇襲力で、中央から各レーンやタートルに真っ先に介入する。単独狩りの起点になる</td>
+<td>2選手で計3試合2勝（ONIC・Alter Ego）</td>
+<td>火力不足。ランクでは勝率44.8%の D</td>
+</tr>
+<tr>
+<td><strong>ファイター3枚（ゴールドにパキートかアウルス）</strong></td>
+<td>マークスマンを置かず、全員が序盤の殴り合いに強い構成。タートルと小競り合いを連続で取り、15分前後で終わらせる</td>
+<td>ゴールドのパキートは ID で計32試合15勝。Alter Ego の Dingarai は7戦全勝。ゴールドのアウルスは7試合4勝</td>
+<td>後半の火力が伸びにくい。長期戦や、距離を取られる戦いに弱い</td>
+</tr>
+<tr>
+<td><strong>ダブルメイジ（ロームにリリア）</strong></td>
+<td>遠距離の範囲ダメージを2枚重ねて、タートルやロード前の撃ち合いで削り勝つ</td>
+<td>ONIC のロームが2試合1勝</td>
+<td>前衛が薄く、飛び込みに弱い。視界取りと仕掛けが弱くなる</td>
+</tr>
+<tr>
+<td><strong>ゴールドにキミー（魔法ダメージのゴールド）</strong></td>
+<td>ゴールドから魔法ダメージを出し、相手が物理防御に偏った装備を無駄にさせる</td>
+<td>3選手で計5試合2勝。ミッドとしてはもっと使われている</td>
+<td>体力が低く、射程管理が難しい</td>
+</tr>
+<tr>
+<td><strong>ジャングルにアリス</strong></td>
+<td>吸収で粘る魔法ダメージの前衛ジャングラー。集団戦の真ん中で暴れる。ランクでは勝率51.0%の A</td>
+<td>5選手で計10試合3勝と結果はよくない</td>
+<td>アンチヒール、バースト。序盤のファームが遅い</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>使いどころ</strong>：本線で試すなら回復ミッドかファイター3枚。ミッドにアンジェラは、飛び込み役が強いカスタム戦や練習で試してから使う。</p>
+<p>出典：<a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub MPL ID S18（選手別ヒーロープール）</a>、<a href="https://mlbbhub.com/tier-list" target="_blank" rel="noopener">MLBBHub ティア表</a></p>
+</section>
+<section class="chapter" id="ch7">
+<h2><span class="num">7</span>ティア表：プロ（MPL）基準</h2>
+<p>フルパではこの表を優先する。MPL ID S18（190試合）と MPL PH S18（172試合）の合計362試合から、登場率（ピックかバンされた試合の割合）と勝率で分類した。公式のプロ用ティア表はないので、この資料用に集計したもの。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ティア</th>
+<th>基準</th>
+<th>ヒーロー（主なレーン、登場率 / 勝率）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S：必ずバンかピック</td>
+<td>登場率85%以上</td>
+<td>フレイヤ（EXP・ゴールド、99% / 60%）、アテラス（ローム、95% / 58%）、ヒララ（ジャングル、94% / 48%）、パキート（ジャングル・EXP・ゴールド、87% / 52%）</td>
+</tr>
+<tr>
+<td>A：優先して争う</td>
+<td>登場率およそ50%以上、勝率50%以上</td>
+<td>マルセル（ローム、69% / 59%）、ファニー（ジャングル、69% / 51%）、ノーラン（ジャングル、58% / 58%）、カーミラ（ローム、57% / 50%）、バラッツ（EXP、55% / 52%）、カーディアン（ローム・EXP、51% / 51%）、燭心（ミッド、50% / 54%）、エウドラ（ミッド、49% / 53%）、マーシャ（EXP・ローム、49% / 53%、シーズン後半に急上昇）</td>
+</tr>
+<tr>
+<td>B：穴場（勝てているのに争われにくい）</td>
+<td>登場率30〜50%、勝率55%以上</td>
+<td>ラファエル（ローム、43% / 58%）、グルー（ローム・EXP、39% / 59%）、アイーダ（ゴールド、38% / 57%）、アウルス（ジャングル、45% / 55%）、クラウド（ゴールド、34% / 55%）</td>
+</tr>
+<tr>
+<td>注意：取られるが勝てていない</td>
+<td>登場率40%以上、勝率47%以下</td>
+<td>ウラノス（EXP、61% / 47%）、セリナ（ミッド、54% / 44%）、エスメラルダ（EXP、51% / 43%）、バレンティナ（ミッド、43% / 40%）、ミノタウロス（ローム、41% / 44%）</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>読み方と注意点</strong></p>
+<ul>
+<li>登場率は「プロがどれだけ警戒しているか」、勝率は「取ったときに勝てているか」を示す。ヒララは勝率が48%でも、ほぼ毎試合争われるので S。</li>
+<li>「注意」のヒーローは、相手の型への対策やカウンターとしては役立つ。エスメラルダは PH プレーオフで26回バンされており、勝率だけで切り捨てない。</li>
+<li>シーズン後半の変化：マーシャは PH プレーオフ全試合でピックかバンされ、カレアも PH プレーオフでヒララに次ぐピック数だった。ID プレーオフではファニーの使用が増えている。</li>
+<li>データはパッチ 2.1.95〜2.2.16a にまたがる。メリッサ（登場率45% / 49%）は2.2.16で、ラファエル・アウルス・ヒララは2.2.16aで弱体化されているので、数字より少し下に見る。</li>
+<li>ピック数が40未満のヒーロー（フレイヤ・ファニー・マーシャ など）は、勝率が大きくぶれやすい。</li>
+</ul>
+<p>集計元：<a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub MPL ID S18</a>、<a href="https://mlbbhub.com/mpl/ph/stats" target="_blank" rel="noopener">MLBBHub MPL PH S18</a>（いずれも 6 Nov 2026 時点）、<a href="https://timesaver.gg/blog/mobile-legends-tier-list-season-42" target="_blank" rel="noopener">Timesaver PH プレーオフ集計</a></p>
+</section>
+    <section class="chapter sources" id="sources">
+      <h2><span class="num">+</span>出典</h2>
+      <ol><li><a href="https://mlbbhub.com/mpl/ph/stats" target="_blank" rel="noopener">MLBBHub PH</a></li><li><a href="https://mlbbhub.com/mpl/id/stats" target="_blank" rel="noopener">MLBBHub ID</a></li><li><a href="https://mlbbhub.com/mpl/ph/drafts" target="_blank" rel="noopener">MLBBHub PH drafts</a></li><li><a href="https://www.thestar.com.my/aseanplus/aseanplus-news/2026/01/25/m7-filipino-side-aurora-gaming-ph-beat-indonesian-team-alter-ego-to-claim-world-title" target="_blank" rel="noopener">The Star – M7</a></li><li><a href="https://mlbbdex.com/en/esports/mpl-ph-season-18" target="_blank" rel="noopener">MLBBDex MPL PH S18</a></li><li><a href="https://mlbbhub.com/tier-list" target="_blank" rel="noopener">MLBBHub ティア表</a></li><li><a href="https://mlbbhub.com/mpl/id/drafts" target="_blank" rel="noopener">MLBBHub ID drafts</a></li><li><a href="https://timesaver.gg/blog/how-to-counter-freya-mobile-legends" target="_blank" rel="noopener">Timesaver フレイヤ対策</a></li><li><a href="https://mlbbhub.com/counter/hirara" target="_blank" rel="noopener">MLBBHub ヒララ対策</a></li><li><a href="https://timesaver.gg/blog/how-to-counter-masha-mobile-legends" target="_blank" rel="noopener">Timesaver マーシャ対策</a></li><li><a href="https://mlbb.io/tr/hero/atlas/counter" target="_blank" rel="noopener">mlbb.io アテラス対策</a></li><li><a href="https://mobile-legends.fandom.com/wiki/Dominance_Ice" target="_blank" rel="noopener">MLBB Wiki Dominance Ice</a></li><li><a href="https://synnmlbb.com/blog/4-crucial-item-tricks-in-mobile-legends-that-90-of-players-ignore" target="_blank" rel="noopener">Synn Store 装備のコツ</a></li><li><a href="https://timesaver.gg/blog/mobile-legends-tier-list-season-42" target="_blank" rel="noopener">Timesaver PH プレーオフ集計</a></li></ol>
+    </section>
+    <footer>パッチやプロの結果が変わったら作り直します。数字は各出典の取得時点のものです。</footer>
+  </main>
+</div>
+<script>
+if (window.matchMedia('(min-width: 980px)').matches) document.getElementById('toc').open = true;
+</script>
+</body>
+</html>
